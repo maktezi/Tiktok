@@ -59,9 +59,9 @@
 </template>
 
 <script setup lang="ts">
-  import MenuItem from "~/components/MenuItem.vue";
-  import MenuItemFollow from "~/components/MenuItemFollow.vue";
+import MenuItem from "~/components/MenuItem.vue";
+import MenuItemFollow from "~/components/MenuItemFollow.vue";
 
-  const route = useRoute()
-  const currentYear = ref(new Date().getFullYear())
+const route = useRoute()
+const currentYear = ref(new Date().getFullYear())
 </script>

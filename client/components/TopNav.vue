@@ -9,7 +9,7 @@
     >
       <div :class="route.fullPath === '/' ? 'w-[80%]' : 'lg-w-[20%] w-[70%]'">
         <NuxtLink to="/">
-          <img width="40" src="../assets/icons/logo.svg" alt="logo">
+          <img width="120" src="../assets/icons/logo1.svg" alt="logo">
         </NuxtLink>
       </div>
 
@@ -81,6 +81,6 @@
 </template>
 
 <script setup lang="ts">
-  const route = useRoute()
-  const showMenu = ref(false)
+const route = useRoute()
+const showMenu = ref(false)
 </script>

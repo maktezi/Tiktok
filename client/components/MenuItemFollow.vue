@@ -23,5 +23,5 @@
 </template>
 
 <script setup lang="ts">
-  defineProps(['user'])
+defineProps(['user'])
 </script>
