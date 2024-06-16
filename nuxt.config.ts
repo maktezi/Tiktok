@@ -9,7 +9,6 @@ export default defineNuxtConfig({
         '@pinia-plugin-persistedstate/nuxt',
         '@nuxt/eslint',
         '@nuxtjs/tailwindcss',
-        '@nuxt/ui',
     ],
     css: ['~/assets/css/main.css'],
     tailwindcss: {

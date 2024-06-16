@@ -24,11 +24,11 @@ const emit = defineEmits(['update:input'])
 
 interface InputProps {
   input: string
-  placeholder: string
-  inputType: string
-  max: number
-  autoFocus: boolean
-  error: string
+  placeholder?: string
+  inputType?: string
+  max?: string
+  autoFocus?: boolean
+  error?: string
 }
 const props = defineProps<InputProps>()
 const { input, placeholder, inputType, max, autoFocus, error } = toRefs(props)
