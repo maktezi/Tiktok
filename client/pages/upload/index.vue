@@ -119,16 +119,16 @@
 <script setup lang="ts">
 import UploadLayout from "~/layouts/UploadLayout.vue";
 
-let file = ref(null)
-let fileDisplay = ref(null)
-let errorType = ref('')
-let caption = ref('')
-let fileData = ref(null)
-let errors = ref(null)
-let isUploading = ref(false)
+let file: Ref<HTMLInputElement | null> = ref(null)
+let fileDisplay: Ref<string | null> = ref(null)
+let errorType: Ref<string | null> = ref(null)
+let caption: Ref<string> = ref('')
+let fileData: Ref<File | null> = ref(null)
+let errors: Ref<any> = ref(null)
+let isUploading: Ref<boolean> = ref(false)
 
-watch(() => caption.value, (caption) => {
-  if (caption.length >= 150) {
+watch(() => caption.value, (newCaption) => {
+  if (newCaption.length >= 150) {
     errorType.value = 'caption'
     return
   }
@@ -136,22 +136,26 @@ watch(() => caption.value, (caption) => {
 })
 
 const onChange = () => {
-  fileDisplay.value = URL.createObjectURL(file.value.files[0])
-  fileData.value = file.value.files[0]
+  if (file.value && file.value.files && file.value.files[0]) {
+    fileDisplay.value = URL.createObjectURL(file.value.files[0])
+    fileData.value = file.value.files[0]
+  }
 }
 
-const onDrop = (e) => {
+const onDrop = (e: DragEvent) => {
   errorType.value = ''
-  file.value = e.dataTransfer.files[0]
-  fileData.value = e.dataTransfer.files[0]
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+    file.value = e.dataTransfer.files[0] as unknown as HTMLInputElement
+    fileData.value = e.dataTransfer.files[0]
 
-  let extension = file.value.name.substring(file.value.name.lastIndexOf('.') + 1)
+    let extension = file.value.name.substring(file.value.name.lastIndexOf('.') + 1)
 
-  if (extension !== 'mp4') {
-    errorType.value = 'file'
-    return
+    if (extension !== 'mp4') {
+      errorType.value = 'file'
+      return
+    }
+    fileDisplay.value = URL.createObjectURL(e.dataTransfer.files[0])
   }
-  fileDisplay.value = URL.createObjectURL(e.dataTransfer.files[0])
 }
 
 const discard = () => {
