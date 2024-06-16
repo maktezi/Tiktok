@@ -1,3 +1,5 @@
 <template>
   <NuxtPage />
+
+  <AuthOverlay />
 </template>

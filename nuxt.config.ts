@@ -8,9 +8,14 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         '@nuxt/eslint',
-        '@nuxtjs/tailwindcss'
+        '@nuxtjs/tailwindcss',
+        '@nuxt/ui',
     ],
     css: ['~/assets/css/main.css'],
+    tailwindcss: {
+        exposeConfig: true,
+        viewer: true,
+    },
     postcss: {
         plugins: {
             tailwindcss: {},
