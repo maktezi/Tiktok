@@ -35,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+import TextInput from "~/components/TextInput.vue";
+
 const { $axios } = useNuxtApp();
 let email = ref("");
 let password = ref("");
@@ -43,14 +45,31 @@ let errors = ref("");
 const login = async () => {
     try {
         await $axios.get("/sanctum/csrf-cookie");
-        await $axios.post("./login", {
-            email: "admin@mail.com",
-            password: "admin1234",
-        });
-        let res = await $axios.get("/api/user");
-        console.log(res);
-    } catch (er) {
-        console.log(er);
+        await $axios.post(
+            "/login",
+            {
+                email: "admin@mail.com",
+                password: "admin1234",
+                remember: false,
+            },
+            {
+                headers: {
+                    accept: "application/json",
+                    "X-CSRF-TOKEN": getCookie("XSRF-TOKEN"),
+                },
+                withCredentials: true,
+            },
+        );
+        let userData = await $axios.get("/api/user");
+        console.log(userData);
+    } catch (error) {
+        console.log(error);
     }
 };
+
+function getCookie(name: string) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
 </script>
