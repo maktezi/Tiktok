@@ -8,40 +8,37 @@
       v-model="inputComputed"
       autocomplete="off"
       maxlength="max"
-    >
+    />
 
-    <span
-      v-if="error"
-      class="text-red-500 text-[14px] font-semibold"
-    >
+    <span v-if="error" class="text-red-500 text-[14px] font-semibold">
       {{ error }}
     </span>
   </div>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['update:input'])
+const emit = defineEmits(["update:input"]);
 
 interface InputProps {
-  input: string
-  placeholder?: string
-  inputType?: string
-  max?: string
-  autoFocus?: boolean
-  error?: string
+  input: string;
+  placeholder?: string;
+  inputType?: string;
+  max?: string;
+  autoFocus?: boolean;
+  error?: string;
 }
-const props = defineProps<InputProps>()
-const { input, placeholder, inputType, max, autoFocus, error } = toRefs(props)
+const props = defineProps<InputProps>();
+const { input, placeholder, inputType, max, autoFocus, error } = toRefs(props);
 
 onMounted(() => {
   if (autoFocus?.value) {
     const inputElement = document.getElementById(`input-${placeholder?.value}`);
-    inputElement?.focus()
+    inputElement?.focus();
   }
-})
+});
 
 const inputComputed = computed({
   get: () => input.value,
-  set: (val) => emit('update:input', val)
-})
+  set: (val) => emit("update:input", val),
+});
 </script>

@@ -8,7 +8,12 @@
       v-if="!isLoaded"
       class="absolute flex items-center justify-center top-0 left-0 aspect-[3/4] w-full object-cover rounded-md bg-black"
     >
-      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#FFFFFF"/>
+      <Icon
+        class="animate-spin ml-1"
+        name="mingcute:loading-line"
+        size="100"
+        color="#FFFFFF"
+      />
     </div>
     <div>
       <video
@@ -24,50 +29,50 @@
         This is some text
       </div>
       <div class="flex items-center -ml-1 text-gray-600 font-bold text-xs">
-        <Icon name="gg:loadbar-sound" size="20"/>
+        <Icon name="gg:loadbar-sound" size="20" />
         3%
-        <Icon class="ml-1" name="tabler:alert-circle" size="16"/>
+        <Icon class="ml-1" name="tabler:alert-circle" size="16" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps(['post'])
+defineProps(["post"]);
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
-let video: Ref<HTMLVideoElement | null> = ref(null)
-let isLoaded: Ref<boolean> = ref(false)
+let video: Ref<HTMLVideoElement | null> = ref(null);
+let isLoaded: Ref<boolean> = ref(false);
 
 onMounted(() => {
   if (video.value) {
-    video.value.addEventListener('loadeddata', (e: Event) => {
+    video.value.addEventListener("loadeddata", (e: Event) => {
       if (e.target) {
         setTimeout(() => {
-          isLoaded.value = true
-        }, 200)
+          isLoaded.value = true;
+        }, 200);
       }
-    })
+    });
   }
-})
+});
 
 onBeforeUnmount(() => {
   if (video.value) {
-    video.value.pause()
-    video.value.currentTime = 0
-    video.value.src = ''
+    video.value.pause();
+    video.value.currentTime = 0;
+    video.value.src = "";
   }
-})
+});
 
 const isHover = (bool: boolean) => {
   if (video.value) {
     if (bool) {
-      video.value.play()
+      video.value.play();
     } else {
-      video.value.pause()
+      video.value.pause();
     }
   }
-}
+};
 </script>

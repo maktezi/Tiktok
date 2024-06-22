@@ -1,12 +1,17 @@
 <template>
   <NuxtPage />
 
-  <AuthOverlay v-if="isLoginOpen"/>
+  <AuthOverlay v-if="isLoginOpen" />
+  <EditProfileOverlay v-if="isEditProfileOpen" />
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-const { $generalStore } = useNuxtApp()
-const { isLoginOpen } = storeToRefs($generalStore)
+useHead({
+  title: "Tiktok",
+});
+
+const { $generalStore } = useNuxtApp();
+const { isLoginOpen, isEditProfileOpen } = storeToRefs($generalStore);
 </script>
