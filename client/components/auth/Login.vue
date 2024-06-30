@@ -43,19 +43,44 @@ let password = ref("");
 let errors = ref("");
 const user = ref();
 
+const getToken = async () => {
+  await $axios.get("/sanctum/csrf-cookie");
+};
+
+function getCookie(cookieName: string): string {
+  const cookies = document.cookie
+    .split(";")
+    .reduce((cookieObj: { [key: string]: string }, currentCookie) => {
+      const [cookieKey, cookieValue] = currentCookie.trim().split("=");
+      cookieObj[cookieKey] = decodeURIComponent(cookieValue); // Decode cookie value
+      return cookieObj;
+    }, {});
+  return cookies[cookieName] || "";
+}
+
 const login = async () => {
   try {
-    await $axios.get("/sanctum/csrf-cookie");
-    await $axios.post("/login", {
-      email: "admin@mail.com",
-      password: "admin1234",
-      remember: false,
-    });
-    let { data } = await $axios.get("/api/user");
-    user.value = data;
-    console.log(data);
+    const sanctumCookie = getCookie("XSRF-TOKEN");
+    await getToken();
+    await $axios.post(
+      "/login",
+      {
+        email: "admin@mail.com",
+        password: "admin1234",
+        remember: false,
+      },
+      {
+        headers: {
+          accept: "application/json",
+          "X-XSRF-TOKEN": sanctumCookie,
+        },
+      },
+    );
+    let response = await $axios.get("/api/user");
+    user.value = response;
+    console.log("Login success", response);
   } catch (error) {
-    console.log(error);
+    console.log("Login failed:", error);
   }
 };
 </script>
