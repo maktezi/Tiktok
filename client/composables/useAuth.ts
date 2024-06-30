@@ -1,9 +1,3 @@
-import axios from "axios";
-
-export const getToken = async () => {
-  await axios.get("/sanctum/csrf-cookie");
-};
-
 export default function getCookie(cookieName: string): string {
   const cookies = document.cookie
     .split(";")

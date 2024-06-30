@@ -34,6 +34,7 @@
         class="flex items-center justify-end gap-3 min-w-[275px] max-w-[320px] w-full"
       >
         <button
+          @click="() => isLoggedIn()"
           class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100"
         >
           <Icon name="mdi:plus" color="#000000" size="22" />
@@ -68,7 +69,7 @@
               <img
                 class="rounded-full"
                 width="30"
-                src="https://picsum.photos/id/83/320/320"
+                :src="$userStore.image"
                 alt="profile"
               />
             </button>
@@ -79,6 +80,7 @@
               class="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl border top-[43px] -right-2"
             >
               <NuxtLink
+                :to="`/profile/${$userStore.id}`"
                 @click="($event) => (showMenu = false)"
                 class="flex items-center justify-start py-3 px-2 hover:bg-gray-100 cursor-pointer"
               >
@@ -86,6 +88,7 @@
                 <span class="pl-2 font-semibold text-sm">Profile</span>
               </NuxtLink>
               <div
+                @click="($event) => logout()"
                 class="flex items-center justify-start py-3 px-1.5 hover:bg-gray-100 border-t cursor-pointer"
               >
                 <Icon name="ic:outline-login" size="20" />
@@ -103,5 +106,29 @@
 const { $userStore, $generalStore } = useNuxtApp();
 
 const route = useRoute();
+const router = useRouter();
+
 const showMenu = ref(false);
+
+onMounted(() => {
+  document.addEventListener("mouseup", function (e: MouseEvent) {
+    const popupMenu = document.getElementById("PopupMenu") as HTMLElement;
+    if (popupMenu && !popupMenu.contains(e.target as Node)) {
+      showMenu.value = false;
+    }
+  });
+});
+
+const isLoggedIn = () => {
+  $userStore.id ? router.push("/upload") : ($generalStore.isLoginOpen = true);
+};
+
+const logout = () => {
+  try {
+    $userStore.logout();
+    router.push("/");
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
