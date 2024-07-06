@@ -55,8 +55,6 @@ export const useUserStore = defineStore("user", {
     },
     async getUser() {
       let response = await $axios.get("/api/logged-in-user");
-      console.log(response);
-
       this.$state.id = response.data[0].id;
       this.$state.name = response.data[0].name;
       this.$state.bio = response.data[0].bio;
