@@ -35,12 +35,11 @@
 
 <script setup lang="ts">
 import TextInput from "~/components/TextInput.vue";
-import type { UnwrapRef } from "vue";
 
 const { $userStore, $generalStore } = useNuxtApp();
-let email: Ref<UnwrapRef<string>> = ref("admin@mail.com");
-let password: Ref<UnwrapRef<string>> = ref("admin1234");
-let errors: string | any = ref(null);
+let email = ref("admin@mail.com");
+let password = ref("admin1234");
+let errors: null | any = ref(null);
 const user = ref();
 
 const login = async () => {

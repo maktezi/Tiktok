@@ -37,7 +37,6 @@
       :error="errors && errors.confirmPassword ? errors.confirmPassword[0] : ''"
     />
   </div>
-  <div class="px-6 text-[12px] text-gray-600">Forgot password?</div>
 
   <div class="px-6 pb-2 mt-6">
     <button
@@ -56,14 +55,12 @@
 </template>
 
 <script setup lang="ts">
-import type { UnwrapRef } from "vue";
-
 const { $userStore, $generalStore } = useNuxtApp();
-let name: Ref<UnwrapRef<string>> = ref("");
-let email: Ref<UnwrapRef<string>> = ref("");
-let password: Ref<UnwrapRef<string>> = ref("");
-let confirmPassword: Ref<UnwrapRef<string>> = ref("");
-let errors: string | any = ref(null);
+let name = ref();
+let email = ref();
+let password = ref();
+let confirmPassword = ref();
+let errors: null | any = ref();
 
 const register = async () => {
   errors.value = null;

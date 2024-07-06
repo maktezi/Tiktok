@@ -44,7 +44,7 @@ export const useUserStore = defineStore("user", {
           name: name,
           email: email,
           password: password,
-          confirmPassword: confirmPassword,
+          password_confirmation: confirmPassword,
         },
         {
           headers: {
@@ -55,6 +55,7 @@ export const useUserStore = defineStore("user", {
     },
     async getUser() {
       let response = await $axios.get("/api/logged-in-user");
+      console.log(response);
 
       this.$state.id = response.data[0].id;
       this.$state.name = response.data[0].name;
