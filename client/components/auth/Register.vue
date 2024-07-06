@@ -1,7 +1,5 @@
 <template>
-  <div class="text-center text-[28px] mb-4 font-bold text-black">Sign up</div>
-
-  <div class="px-6 pb-1.5 text-[15px] text-black">Email address</div>
+  <div class="text-center text-[28px] mb-8 font-bold text-black">Sign up</div>
 
   <div class="px-6 pb-2">
     <TextInput
@@ -9,31 +7,34 @@
       v-model:input="name"
       inputType="text"
       :autofocus="true"
-      error=""
+      :error="errors && errors.name ? errors.name[0] : ''"
     />
   </div>
+
   <div class="px-6 pb-2">
     <TextInput
       placeholder="Email address"
       v-model:input="email"
       inputType="email"
-      error=""
+      :error="errors && errors.email ? errors.email[0] : ''"
     />
   </div>
+
   <div class="px-6 pb-2">
     <TextInput
       placeholder="Password"
       v-model:input="password"
       inputType="password"
-      error=""
+      :error="errors && errors.password ? errors.password[0] : ''"
     />
   </div>
+
   <div class="px-6 pb-2">
     <TextInput
       placeholder="Confirm password"
       v-model:input="confirmPassword"
       inputType="password"
-      error=""
+      :error="errors && errors.confirmPassword ? errors.confirmPassword[0] : ''"
     />
   </div>
   <div class="px-6 text-[12px] text-gray-600">Forgot password?</div>
@@ -55,15 +56,17 @@
 </template>
 
 <script setup lang="ts">
+import type { UnwrapRef } from "vue";
+
 const { $userStore, $generalStore } = useNuxtApp();
-let name = ref("");
-let email = ref("");
-let password = ref("");
-let confirmPassword = ref("");
-let errors = ref("");
+let name: Ref<UnwrapRef<string>> = ref("");
+let email: Ref<UnwrapRef<string>> = ref("");
+let password: Ref<UnwrapRef<string>> = ref("");
+let confirmPassword: Ref<UnwrapRef<string>> = ref("");
+let errors: string | any = ref(null);
 
 const register = async () => {
-  errors.value = "";
+  errors.value = null;
 
   try {
     await $userStore.getToken();

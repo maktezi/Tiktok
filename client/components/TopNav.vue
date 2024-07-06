@@ -65,7 +65,7 @@
             size="27"
           />
           <div class="relative">
-            <button class="mt-1" @click="($event) => (showMenu = !showMenu)">
+            <button class="mt-1" @click="() => (showMenu = !showMenu)">
               <img
                 class="rounded-full"
                 width="30"
@@ -81,14 +81,14 @@
             >
               <NuxtLink
                 :to="`/profile/${$userStore.id}`"
-                @click="($event) => (showMenu = false)"
+                @click="() => (showMenu = false)"
                 class="flex items-center justify-start py-3 px-2 hover:bg-gray-100 cursor-pointer"
               >
                 <Icon name="ph:user" size="20" />
                 <span class="pl-2 font-semibold text-sm">Profile</span>
               </NuxtLink>
               <div
-                @click="($event) => logout()"
+                @click="() => logout()"
                 class="flex items-center justify-start py-3 px-1.5 hover:bg-gray-100 border-t cursor-pointer"
               >
                 <Icon name="ic:outline-login" size="20" />

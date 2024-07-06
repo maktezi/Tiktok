@@ -1,7 +1,5 @@
 <template>
-  <div class="text-center text-[28px] mb-4 font-bold text-black">Login</div>
-
-  <div class="px-6 pb-1.5 text-[15px] text-black">Email address</div>
+  <div class="text-center text-[28px] mb-8 font-bold text-black">Login</div>
 
   <div class="px-6 pb-2">
     <TextInput
@@ -9,9 +7,10 @@
       v-model:input="email"
       inputType="email"
       :autofocus="true"
-      error=""
+      :error="errors && errors.email ? errors.email[0] : ''"
     />
   </div>
+
   <div class="px-6 pb-2">
     <TextInput
       placeholder="Password"
@@ -36,15 +35,16 @@
 
 <script setup lang="ts">
 import TextInput from "~/components/TextInput.vue";
+import type { UnwrapRef } from "vue";
 
 const { $userStore, $generalStore } = useNuxtApp();
-let email = ref("");
-let password = ref("");
-let errors = ref("");
+let email: Ref<UnwrapRef<string>> = ref("admin@mail.com");
+let password: Ref<UnwrapRef<string>> = ref("admin1234");
+let errors: string | any = ref(null);
 const user = ref();
 
 const login = async () => {
-  errors.value = "";
+  errors.value = null;
 
   try {
     await $userStore.getToken();
