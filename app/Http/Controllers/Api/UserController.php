@@ -23,19 +23,20 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function updateUserImage(Request $request)
     {
-        //
+        $request->validate(['image' => 'required|mimes:png,jpg,jpeg']);
+        if ($request->height === '' || $request->width === '' || $request->top === '' || $request->left === '') {
+            return response()->json(['error' => 'The dimensions are incomplete'], 400);
+        }
+
+        try {
+            $user = (new FileService)->updateImage(auth()->user(), $request);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
     /**

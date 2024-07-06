@@ -49,7 +49,6 @@ const login = async () => {
     await $userStore.getToken();
     await $userStore.login(email.value, password.value);
     await $userStore.getUser();
-
     $generalStore.isLoginOpen = false;
   } catch (error: any | unknown) {
     console.log(error);
