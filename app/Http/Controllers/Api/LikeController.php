@@ -43,6 +43,11 @@ class LikeController extends Controller
                 $like->delete();
             }
             return response()->json([
+                'like' => [
+                    'id' => $like->id,
+                    'post_id' => $like->post_id,
+                    'user_id' => $like->user_id,
+                ],
                 'success' => 'OK'
             ], 200);
         } catch (\Exception $e) {
