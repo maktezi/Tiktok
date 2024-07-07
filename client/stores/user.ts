@@ -60,6 +60,14 @@ export const useUserStore = defineStore("user", {
       this.$state.bio = response.data[0].bio;
       this.$state.image = response.data[0].image;
     },
+    async createPost(data: object) {
+      const sanctumCookie = getCookie("XSRF-TOKEN");
+      return await $axios.post("/api/posts", data, {
+        headers: {
+          "X-XSRF-TOKEN": sanctumCookie,
+        },
+      });
+    },
     async logout() {
       const sanctumCookie = getCookie("XSRF-TOKEN");
       try {
@@ -73,7 +81,7 @@ export const useUserStore = defineStore("user", {
         console.error("Logout error:", error);
       }
     },
-    async resetUser() {
+    resetUser() {
       this.$state.id = "";
       this.$state.name = "";
       this.$state.email = "";

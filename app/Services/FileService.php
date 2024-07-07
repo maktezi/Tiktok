@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use Image:
+use Image;
 
 class FileService
 {

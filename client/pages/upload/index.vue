@@ -1,6 +1,18 @@
 <template>
   <UploadError :error-type="errorType" />
 
+  <div
+    v-if="isUploading"
+    class="fixed flex items-center justify-center top-0 left-0 w-full h-screen bg-black z-50 bg-opacity-50"
+  >
+    <Icon
+      class="animate-spin ml-1"
+      name="mingcute:loading-line"
+      size="100"
+      color="#FFFFFF"
+    />
+  </div>
+
   <UploadLayout>
     <div
       class="w-full mt-[80px] mb-[40px] bg-white shadow-lg rounded-md py-6 md:px-10 px-4"
@@ -127,16 +139,25 @@
 
           <div class="flex gap-3">
             <button
-              class="px-10 py-2.5 mt-8 border text-[16px] hover:bg-gray-100 font-bold rounded-sm"
               @click="() => discard()"
+              class="px-10 py-2.5 mt-8 border text-[16px] hover:bg-gray-100 font-bold rounded-sm"
             >
               Discard
             </button>
             <button
+              @click="() => createPost()"
               class="px-10 py-2.5 mt-8 border text-[16px] text-white font-bold bg-[#F02C56] rounded-sm"
             >
               Post
             </button>
+          </div>
+          <div v-if="errors" class="mt-4">
+            <div class="text-red-600" v-if="errors && errors.text">
+              {{ errors.text[0] }}
+            </div>
+            <div class="text-red-600" v-if="errors && errors.video">
+              {{ errors.video[0] }}
+            </div>
           </div>
         </div>
       </div>
@@ -146,13 +167,15 @@
 
 <script setup lang="ts">
 import UploadLayout from "~/layouts/UploadLayout.vue";
+const { $userStore } = useNuxtApp();
+const router = useRouter();
 
 const file: Ref<HTMLInputElement | null> = ref(null);
 const fileDisplay: Ref<string | null> = ref(null);
 const errorType: Ref<string | null> = ref(null);
 const caption: Ref<string> = ref("");
 const fileData: Ref<File | null> = ref(null);
-const errors: Ref<never> = ref(null);
+const errors: Ref<any> = ref(null);
 const isUploading: Ref<boolean> = ref(false);
 
 watch(
@@ -196,6 +219,29 @@ const discard = () => {
   fileDisplay.value = null;
   fileData.value = null;
   caption.value = "";
+};
+
+const createPost = async () => {
+  errors.value = null;
+  let data = new FormData();
+  data.append("video", fileData.value || "");
+  data.append("text", caption.value || "");
+  if (fileData.value && caption.value) {
+    isUploading.value = true;
+  }
+  try {
+    await $userStore.getToken();
+    let res = await $userStore.createPost(data);
+    if (res.status === 200) {
+      setTimeout(() => {
+        router.push("/profile/" + $userStore.id);
+        isUploading.value = false;
+      }, 1000);
+    }
+  } catch (error: any) {
+    errors.value = error.response.data.errors;
+    isUploading.value = false;
+  }
 };
 
 const clearVideo = () => {
