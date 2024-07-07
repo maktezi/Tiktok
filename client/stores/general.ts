@@ -24,6 +24,12 @@ export const useGeneralStore = defineStore("general", {
       }
       document.body.style.overflow = "visible";
     },
+    allLowerCaseNoCaps(str: string) {
+      return str.split(" ").join("").toLowerCase();
+    },
+    setBackUrl(url: string) {
+      this.isBackUrl = url;
+    },
     async hasSessionExpired() {
       await $axios.interceptors.response.use(
         (response: AxiosResponse) => {
