@@ -2,36 +2,36 @@
 
 namespace App\Services;
 
-use Image;
+use Intervention\Image\Facades\Image;
 
 class FileService
 {
     public function updateImage($model, $request)
     {
-         $image = Image::make($request->file('image'));
+        $image = Image::make($request->file('image'));
+        if (!empty($model->image)) {
+            $currentImage = public_path() . $model->image;
+            if (file_exists($currentImage) && $currentImage != public_path() . '/user-placeholder.png') {
+                unlink($currentImage);
+            }
+        }
 
-         if (!empty($model->image)) {
-             $currentImage = public_path() . $model->image;
+        $file = $request->file('image');
+        $extension = $file->getClientOriginalExtension();
+        $name = time() . '.' . $extension;
+        $path = '/files/' . $name;
 
-             if (file_exists($currentImage) && $currentImage != public_path() . '/user-placeholder.png') {
-                 unlink($currentImage);
-             }
-         }
+        $image->crop(
+            (int)$request->width,
+            (int)$request->height,
+            (int)$request->left,
+            (int)$request->top
+        );
 
-         $file = $request->file('image');
-         $extension = $file->getClientOriginalExtension();
+        $image->save(public_path() . $path);
+        $model->image = $path;
 
-         $image->crop(
-             $request->width,
-             $request->height,
-             $request->left,
-             $request->top,
-         );
-
-         $name = time() . '.' . $extension;
-         $image->save(public_path() . '/files/' . $name);
-
-         return $model;
+        return $model;
     }
 
     public function addVideo($model, $request)

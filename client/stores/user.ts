@@ -24,9 +24,7 @@ export const useUserStore = defineStore("user", {
           password: password,
         },
         {
-          headers: {
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-          },
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
         },
       );
     },
@@ -45,37 +43,46 @@ export const useUserStore = defineStore("user", {
           password_confirmation: confirmPassword,
         },
         {
-          headers: {
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-          },
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
         },
       );
     },
     async getUser() {
-      let response = await $axios.get("/api/logged-in-user");
+      let response = await $axios.get("/api/logged-in-user", {
+        headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+      });
       this.$state.id = response.data[0].id;
       this.$state.name = response.data[0].name;
       this.$state.bio = response.data[0].bio;
       this.$state.image = response.data[0].image;
     },
-    async updateUserImage(data: object) {
-      return await $axios.post("/api/update-user-image", data);
+    async updateUserImage(data: FormData) {
+      try {
+        const response = await $axios.post("/api/update-user-image", data, {
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+        });
+
+        if (response.status === 200) {
+          return response.data;
+        } else {
+          throw new Error(response.data.error || "Failed to update user image");
+        }
+      } catch (error) {
+        console.error("Error updating user image:", error);
+        throw error;
+      }
     },
     async createPost(data: object) {
       return await $axios.post("/api/posts", data, {
-        headers: {
-          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-        },
+        headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
       });
     },
     async logout() {
       try {
         await $axios.post("/logout", null, {
-          headers: {
-            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
-          },
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
         });
-        await this.resetUser();
+        this.resetUser();
       } catch (error) {
         console.error("Logout error:", error);
       }
