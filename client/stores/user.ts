@@ -17,7 +17,6 @@ export const useUserStore = defineStore("user", {
       await $axios.get("/sanctum/csrf-cookie");
     },
     async login(email: string, password: string) {
-      const sanctumCookie = getCookie("XSRF-TOKEN");
       await $axios.post(
         "/login",
         {
@@ -26,7 +25,7 @@ export const useUserStore = defineStore("user", {
         },
         {
           headers: {
-            "X-XSRF-TOKEN": sanctumCookie,
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
           },
         },
       );
@@ -37,7 +36,6 @@ export const useUserStore = defineStore("user", {
       password: string,
       confirmPassword: string,
     ) {
-      const sanctumCookie = getCookie("XSRF-TOKEN");
       await $axios.post(
         "/register",
         {
@@ -48,7 +46,7 @@ export const useUserStore = defineStore("user", {
         },
         {
           headers: {
-            "X-XSRF-TOKEN": sanctumCookie,
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
           },
         },
       );
@@ -60,20 +58,21 @@ export const useUserStore = defineStore("user", {
       this.$state.bio = response.data[0].bio;
       this.$state.image = response.data[0].image;
     },
+    async updateUserImage(data: object) {
+      return await $axios.post("/api/update-user-image", data);
+    },
     async createPost(data: object) {
-      const sanctumCookie = getCookie("XSRF-TOKEN");
       return await $axios.post("/api/posts", data, {
         headers: {
-          "X-XSRF-TOKEN": sanctumCookie,
+          "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
         },
       });
     },
     async logout() {
-      const sanctumCookie = getCookie("XSRF-TOKEN");
       try {
         await $axios.post("/logout", null, {
           headers: {
-            "X-XSRF-TOKEN": sanctumCookie,
+            "X-XSRF-TOKEN": getCookie("XSRF-TOKEN"),
           },
         });
         await this.resetUser();

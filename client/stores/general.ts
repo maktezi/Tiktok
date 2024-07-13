@@ -52,6 +52,14 @@ export const useGeneralStore = defineStore("general", {
         },
       );
     },
+    updateSideMenuImage(array: any, user: any) {
+      for (let i = 0; i < array.length; i++) {
+        const res = array[i];
+        if (res.id == user.id) {
+          res.image = user.image;
+        }
+      }
+    },
   },
   persist: true,
 });

@@ -34,7 +34,7 @@
           <div class="flex items-center justify-center sm:mt-6 md:-mt-6">
             <label for="image" class="relative">
               <img
-                src="https://picsum.photos/id/8/320/320"
+                :src="userImage"
                 alt="image"
                 class="rounded-full"
                 width="95"
@@ -135,6 +135,23 @@
           </button>
           <button
             class="flex items-center bg-[#F02C56] text-white border rounded-md ml-3 px-3 py-[6px]"
+            @click="() => updateUserInfo()"
+            :disabled="!isUpdated"
+            :class="!isUpdated ? 'bg-gray-200' : 'bg-[#F02C56]'"
+          >
+            Apply
+          </button>
+        </div>
+
+        <div v-else id="CropperButtons" class="flex items-center justify-end">
+          <button
+            class="flex items-center rounded-md px-3 py-[6px] hover:bg-gray-100"
+            @click="() => (uploadedImage = null)"
+          >
+            <span class="px-2 font-medium text-[16px]">Cancel</span>
+          </button>
+          <button
+            class="flex items-center bg-[#F02C56] text-white border rounded-md ml-3 px-3 py-[6px]"
             @click="() => cropAndUpdateImage()"
           >
             Apply
@@ -153,6 +170,8 @@ import { storeToRefs } from "pinia";
 const { $userStore, $generalStore, $profileStore } = useNuxtApp();
 const { name, bio, image } = storeToRefs($userStore);
 
+const route = useRoute();
+
 onMounted(() => {
   userName.value = name.value;
   userBio.value = bio.value;
@@ -162,7 +181,7 @@ onMounted(() => {
 let file: Ref<File | null> = ref(null);
 let cropper: Ref<typeof Cropper | null> = ref(null);
 let uploadedImage: Ref<string | null> = ref(null);
-let userImage: Ref<string | null> = ref(null);
+let userImage: Ref<string | undefined> = ref();
 let userName: Ref<string> = ref("");
 let userBio: Ref<string> = ref("");
 let isUpdated: Ref<boolean> = ref(false);
@@ -172,6 +191,32 @@ const getUploadedImage = (e: Event) => {
   if (target.files && target.files.length > 0) {
     file.value = target.files[0];
     uploadedImage.value = URL.createObjectURL(file.value);
+  }
+};
+
+const cropAndUpdateImage = async () => {
+  const { coordinates } = cropper.value.getResult();
+  let data = new FormData();
+
+  data.append("image", file.value || "");
+  data.append("height", coordinates.height || "");
+  data.append("width", coordinates.width || "");
+  data.append("left", coordinates.left || "");
+  data.append("top", coordinates.top || "");
+
+  try {
+    await $userStore.getToken();
+    await $userStore.updateUserImage(data);
+    await $userStore.getUser();
+    await $profileStore.getProfile(route.params.id);
+
+    $generalStore.updateSideMenuImage($generalStore.suggested, $userStore);
+    $generalStore.updateSideMenuImage($generalStore.following, $userStore);
+
+    userImage.value = image.value;
+    uploadedImage.value = null;
+  } catch (err) {
+    console.error(err);
   }
 };
 
