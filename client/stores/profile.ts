@@ -10,25 +10,31 @@ export const useProfileStore = defineStore("profile", {
     bio: "",
     image: "",
     post: "",
-    posts: "",
+    posts: [],
     allLikes: 0,
   }),
   actions: {
     async getProfile(id: any) {
       this.resetUser();
-      let res = await $axios.get(`/api/profiles/${id}`);
-      this.$state.id = res.data.user[0].id;
-      this.$state.name = res.data.user[0].name;
-      this.$state.bio = res.data.user[0].bio;
-      this.$state.image = res.data.user[0].image;
-      this.$state.posts = res.data.posts;
+      try {
+        const res = await $axios.get(`/api/profiles/${id}`);
+        const userData = res.data.user[0];
+        const postData = res.data.post;
+        this.$state.id = userData.id;
+        this.$state.name = userData.name;
+        this.$state.bio = userData.bio || "";
+        this.$state.image = userData.image;
+        this.$state.posts = postData || [];
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
     },
     resetUser() {
       this.$state.id = "";
       this.$state.name = "";
       this.$state.bio = "";
       this.$state.image = "";
-      this.$state.posts = "";
+      this.$state.posts = [];
     },
   },
   persist: true,
