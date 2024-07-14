@@ -66,6 +66,10 @@ export const useGeneralStore = defineStore("general", {
         }
       }
     },
+    async getAllUsersAndPosts() {
+      let res = await $axios.get("/api/home");
+      this.posts = res.data;
+    },
   },
   persist: true,
 });

@@ -1,23 +1,23 @@
 <template>
-  <div id="PostMain" class="flex border-b py-6">
-    <div class="cursor-pointer">
+  <div :id="`PostMain-${post.id}`" class="flex border-b py-6">
+    <div @click="() => isLoggedIn(post.user)" class="cursor-pointer">
       <img
         class="rounded-full max-h-[60px]"
         width="60"
-        src="https://picsum.photos/id/8/300/320"
+        :src="post.user.image"
         alt="post"
       />
     </div>
     <div class="pl-3 w-full px-4">
       <div class="flex items-center justify-between pb-0.5">
-        <button>
+        <button @click="isLoggedIn(post.user)">
           <span class="font-bold hover:underline cursor-pointer">
-            User name
+            {{ $generalStore.allLowerCaseNoCaps(post.user.name) }}
           </span>
           <span
             class="text-[13px] text-light text-gray-500 pl-1 cursor-pointer"
           >
-            User name
+            {{ post.user.name }}
           </span>
         </button>
 
@@ -31,7 +31,7 @@
       <div
         class="text-[15px] pb-0.5 break-words md:max-w-[400px] max-w-[300px]"
       >
-        This is some text
+        {{ post.text }}
       </div>
       <div class="text-[14px] text-gray-500 pb-0.5">
         #fun #cool #SuperAwesome
@@ -44,14 +44,16 @@
 
       <div class="mt-2.5 flex">
         <div
+          @click="() => displayPost(post)"
           class="relative min-h-[400px] max-h-[580px] max-w-[260px] flex items-center bg-black rounded-xl cursor-pointer"
         >
           <video
-            ref="videoRef"
+            v-if="post.video"
+            ref="video"
             loop
             muted
             class="rounded-xl object-cover mx-auto h-full"
-            src="/videos/vid1.mp4"
+            :src="post.video"
           />
           <img
             class="absolute right-2 bottom-8"
@@ -87,11 +89,51 @@
 </template>
 
 <script setup lang="ts">
-const videoRef = ref<HTMLVideoElement | null>(null);
+const { $generalStore, $userStore } = useNuxtApp();
+const props = defineProps(["post"]);
+const { post }: any = toRefs(props);
+const router = useRouter();
+let video = ref();
 
 onMounted(() => {
-  if (videoRef.value) {
-    videoRef.value.play();
-  }
+  let observer = new IntersectionObserver(
+    function (entries) {
+      if (entries[0].isIntersecting) {
+        console.log("Element is playing" + post.value.id);
+        video.value.play();
+      } else {
+        console.log("Element is paused" + post.value.id);
+        video.value.pause();
+      }
+    },
+    { threshold: 0.6 },
+  );
+  observer.observe(document.getElementById(`PostMain-${post.value.id}`));
 });
+
+onBeforeUnmount(() => {
+  video.value.pause();
+  video.value.currentTime = 0;
+  video.value.src = "";
+});
+
+const isLoggedIn = (user: any) => {
+  if (!$userStore.id) {
+    $generalStore.isLoginOpen = true;
+    return;
+  }
+  setTimeout(() => {
+    router.push(`/profile/${user.id}`);
+  }, 200);
+};
+
+const displayPost = (post: any) => {
+  if (!$userStore.id) {
+    $generalStore.isLoginOpen = true;
+    return;
+  }
+  $generalStore.setBackUrl("/");
+  $generalStore.selectedPost = null;
+  setTimeout(() => router.push(`/post/${post.id}`), 200);
+};
 </script>
