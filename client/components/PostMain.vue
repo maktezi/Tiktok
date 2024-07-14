@@ -59,15 +59,25 @@
             class="absolute right-2 bottom-8"
             width="90"
             src="~/assets/icons/logo_white.svg"
+            alt="logo"
           />
         </div>
         <div class="relative mr-[75px]">
           <div class="absolute bottom-0 pl-2">
             <div class="pb-4 text-center">
-              <button class="rounded-full bg-gray-200 p-2 cursor-pointer">
-                <Icon name="mdi:heart" size="25" />
+              <button
+                @click="() => (isLiked ? unlikePost(post) : likePost(post))"
+                class="rounded-full bg-gray-200 p-2 cursor-pointer"
+              >
+                <Icon
+                  name="mdi:heart"
+                  size="25"
+                  :color="isLiked ? '#F02C56' : ''"
+                />
               </button>
-              <span class="text-xs text-gray-800 font-semibold">5500</span>
+              <span class="text-xs text-gray-800 font-semibold">
+                {{ post.likes.length }}
+              </span>
             </div>
             <div class="pb-4 text-center">
               <button class="rounded-full bg-gray-200 p-2 cursor-pointer">
@@ -116,6 +126,26 @@ onBeforeUnmount(() => {
   video.value.currentTime = 0;
   video.value.src = "";
 });
+
+const isLiked = computed(() => {
+  let res = post.value.likes.find(
+    (like: any) => like.user_id === $userStore.id,
+  );
+  return !!res;
+});
+
+const likePost = async (post: any) => {
+  if (!$userStore.id) {
+    $generalStore.isLoginOpen = true;
+    return;
+  }
+  try {
+    await $userStore.getToken();
+    await $userStore.likePost(post);
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 const isLoggedIn = (user: any) => {
   if (!$userStore.id) {
