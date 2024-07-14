@@ -248,7 +248,7 @@ watch(
 watch(
   () => userBio.value,
   () => {
-    isUpdated.value = !(!userBio.value || userBio.value.length < 1);
+    isUpdated.value = !(!userName.value || userBio.value.length < 1);
   },
 );
 </script>

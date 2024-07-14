@@ -52,6 +52,12 @@ export const useGeneralStore = defineStore("general", {
         },
       );
     },
+    async getRandomUsers(type: "suggested" | "following") {
+      let res = await $axios.get(`/api/get-random-users`);
+      if (type === "suggested" || type === "following") {
+        this[type] = res.data[type];
+      }
+    },
     updateSideMenuImage(array: any, user: any) {
       for (let i = 0; i < array.length; i++) {
         const res = array[i];
