@@ -147,6 +147,19 @@ const likePost = async (post: any) => {
   }
 };
 
+const unlikePost = async (post: any) => {
+  if (!$userStore.id) {
+    $generalStore.isLoginOpen = true;
+    return;
+  }
+  try {
+    await $userStore.getToken();
+    await $userStore.unlikePost(post);
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 const isLoggedIn = (user: any) => {
   if (!$userStore.id) {
     $generalStore.isLoginOpen = true;

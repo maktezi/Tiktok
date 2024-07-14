@@ -101,6 +101,32 @@ export const useUserStore = defineStore("user", {
       console.log(singlePost);
       singlePost.likes.push(res.data.like);
     },
+    async unlikePost(post: any, isPostPage: any) {
+      let deleteLike: any = null;
+      let singlePost: any = null;
+
+      if (isPostPage) {
+        singlePost = post;
+      } else {
+        singlePost = useGeneralStore().posts.find((p: any) => p.id === post.id);
+      }
+
+      singlePost.likes.forEach((like: any) => {
+        if (like.user_id === this.id) {
+          deleteLike = like;
+        }
+      });
+      let res = await $axios.delete("/api/likes/" + deleteLike.id, {
+        headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+      });
+
+      for (let i = 0; i < singlePost.likes.length; i++) {
+        const like = singlePost.likes[i];
+        if (like.id === res.data.like.id) {
+          singlePost.likes.splice(i, 1);
+        }
+      }
+    },
     async logout() {
       try {
         await $axios.post("/logout", null, {
