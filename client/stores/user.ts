@@ -17,6 +17,7 @@ export const useUserStore = defineStore("user", {
       await $axios.get("/sanctum/csrf-cookie");
     },
     async login(email: string, password: string) {
+      this.resetUser();
       await $axios.post(
         "/login",
         {
@@ -34,6 +35,7 @@ export const useUserStore = defineStore("user", {
       password: string,
       confirmPassword: string,
     ) {
+      this.resetUser();
       await $axios.post(
         "/register",
         {
@@ -58,19 +60,23 @@ export const useUserStore = defineStore("user", {
     },
     async updateUserImage(data: FormData) {
       try {
-        const response = await $axios.post("/api/update-user-image", data, {
+        return await $axios.post("/api/update-user-image", data, {
           headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
         });
-
-        if (response.status === 200) {
-          return response.data;
-        } else {
-          throw new Error(response.data.error || "Failed to update user image");
-        }
       } catch (error) {
         console.error("Error updating user image:", error);
         throw error;
       }
+    },
+    async updateUser(name: string, bio: string) {
+      return await $axios.patch(
+        `/api/update-user`,
+        {
+          name: name,
+          bio: bio,
+        },
+        { headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") } },
+      );
     },
     async createPost(data: object) {
       return await $axios.post("/api/posts", data, {
