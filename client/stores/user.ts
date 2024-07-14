@@ -59,16 +59,6 @@ export const useUserStore = defineStore("user", {
       this.$state.bio = response.data[0].bio;
       this.$state.image = response.data[0].image;
     },
-    async updateUserImage(data: FormData) {
-      try {
-        return await $axios.post("/api/update-user-image", data, {
-          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
-        });
-      } catch (error) {
-        console.error("Error updating user image:", error);
-        throw error;
-      }
-    },
     async updateUser(name: string, bio: string) {
       return await $axios.patch(
         `/api/update-user`,
@@ -78,6 +68,16 @@ export const useUserStore = defineStore("user", {
         },
         { headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") } },
       );
+    },
+    async updateUserImage(data: FormData) {
+      try {
+        return await $axios.post("/api/update-user-image", data, {
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+        });
+      } catch (error) {
+        console.error("Error updating user image:", error);
+        throw error;
+      }
     },
     async createPost(data: object) {
       return await $axios.post("/api/posts", data, {
@@ -90,27 +90,22 @@ export const useUserStore = defineStore("user", {
         { post_id: post.id },
         { headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") } },
       );
-      console.log(res);
-
       let singlePost = null;
       if (isPostPage) {
         singlePost = post;
       } else {
         singlePost = useGeneralStore().posts.find((p: any) => p.id === post.id);
       }
-      console.log(singlePost);
       singlePost.likes.push(res.data.like);
     },
     async unlikePost(post: any, isPostPage: any) {
       let deleteLike: any = null;
       let singlePost: any = null;
-
       if (isPostPage) {
         singlePost = post;
       } else {
         singlePost = useGeneralStore().posts.find((p: any) => p.id === post.id);
       }
-
       singlePost.likes.forEach((like: any) => {
         if (like.user_id === this.id) {
           deleteLike = like;
@@ -119,7 +114,6 @@ export const useUserStore = defineStore("user", {
       let res = await $axios.delete("/api/likes/" + deleteLike.id, {
         headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
       });
-
       for (let i = 0; i < singlePost.likes.length; i++) {
         const like = singlePost.likes[i];
         if (like.id === res.data.like.id) {
