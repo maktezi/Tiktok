@@ -84,11 +84,53 @@ export const useUserStore = defineStore("user", {
         headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
       });
     },
+    async addComment(post: any, comment: string) {
+      let res = await $axios.post(
+        "/api/comments",
+        {
+          post_id: post.id,
+          comment: comment,
+        },
+        {
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+        },
+      );
+      if (res.status === 200) {
+        await this.updateComments(post);
+      }
+    },
+    async deleteComment(post: any, commentId: any) {
+      let res = await $axios.delete(
+        `/api/comments/${commentId}`,
+        {
+          post_id: post.id,
+        },
+        {
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+        },
+      );
+      if (res.status === 200) {
+        await this.updateComments(post);
+      }
+    },
+    async updateComments(post: any) {
+      let res = await $axios.get(`api/profiles/${post.user.id}`, {
+        headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+      });
+      for (let i = 0; i < res.data.post.length; i++) {
+        const updatePost = res.data.post[i];
+        if (post.id == updatePost.id) {
+          useGeneralStore().selectedPost.comments = updatePost.comments;
+        }
+      }
+    },
     async likePost(post: any, isPostPage: any) {
       let res = await $axios.post(
         "/api/likes",
         { post_id: post.id },
-        { headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") } },
+        {
+          headers: { "X-XSRF-TOKEN": getCookie("XSRF-TOKEN") },
+        },
       );
       let singlePost = null;
       if (isPostPage) {

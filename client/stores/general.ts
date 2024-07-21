@@ -58,6 +58,11 @@ export const useGeneralStore = defineStore("general", {
         this[type] = res.data[type];
       }
     },
+    async getPostById(id: any) {
+      let res = await $axios.get(`/api/posts/${id}`);
+      this.$state.selectedPost = res.data.post[0];
+      this.$state.ids = res.data.ids;
+    },
     updateSideMenuImage(array: any, user: any) {
       for (let i = 0; i < array.length; i++) {
         const res = array[i];
